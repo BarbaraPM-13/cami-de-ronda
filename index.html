@@ -607,68 +607,6 @@
       .walker      { width: 29px; height: 43px; }
     }
 
-    /* ── WALKER POPUP ── */
-    .walker-wrap { cursor: pointer; }
-
-    .walker-popup-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.45);
-      z-index: 2000;
-      align-items: center;
-      justify-content: center;
-    }
-    .walker-popup-overlay.open { display: flex; }
-
-    .walker-popup {
-      background: white;
-      border-radius: 24px;
-      padding: 36px 40px 32px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-      position: relative;
-      max-width: 320px;
-      width: 88%;
-      border: 3px solid transparent;
-      background: linear-gradient(white, white) padding-box,
-                  linear-gradient(135deg, var(--pink), var(--coral), var(--sun)) border-box;
-      animation: popup-in 0.3s cubic-bezier(.34,1.56,.64,1);
-    }
-
-    @keyframes popup-in {
-      from { transform: scale(0.7); opacity: 0; }
-      to   { transform: scale(1);   opacity: 1; }
-    }
-
-    .walker-popup-close {
-      position: absolute;
-      top: 12px; right: 14px;
-      background: none;
-      border: none;
-      font-size: 1.4rem;
-      cursor: pointer;
-      color: var(--muted);
-      line-height: 1;
-      transition: color 0.15s, transform 0.15s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .walker-popup-close:hover { color: var(--pink); transform: scale(1.2); }
-
-    .walker-popup-title {
-      font-size: 1.15rem;
-      font-weight: 900;
-      text-align: center;
-      background: linear-gradient(90deg, var(--pink), var(--coral));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: 1.3;
-    }
-
     /* ── COMPLETION BADGE ── */
     .completion-overlay {
       display: none;
@@ -724,12 +662,6 @@
     }
     .completion-badge-close:hover { opacity: 0.88; transform: scale(1.03); }
 
-    .walker-popup-figure {
-      display: flex;
-      align-items: flex-end;
-      height: 138px;
-      overflow: visible;
-    }
   </style>
 </head>
 <body>
@@ -843,80 +775,7 @@
   </div>
 </div>
 
-<!-- Walker popup -->
-<div class="walker-popup-overlay" id="walker-popup-overlay">
-  <div class="walker-popup">
-    <button class="walker-popup-close" id="walker-popup-close" aria-label="Cerrar">✕</button>
-    <div class="walker-popup-title">Bea en el camino de Ronda</div>
-    <div class="walker-popup-figure" aria-hidden="true">
-      <svg class="walker" viewBox="0 0 60 92" xmlns="http://www.w3.org/2000/svg" width="90" height="138">
-        <!-- ══ CURLY HAIR BACK ══ -->
-        <circle cx="16" cy="19" r="13"  fill="#6B2E14"/>
-        <circle cx="11" cy="13" r="10"  fill="#6B2E14"/>
-        <circle cx="20" cy="8"  r="9"   fill="#6B2E14"/>
-        <circle cx="29" cy="7"  r="8"   fill="#6B2E14"/>
-        <circle cx="10" cy="30" r="9"   fill="#5C2610"/>
-        <circle cx="7"  cy="42" r="8"   fill="#5C2610"/>
-        <circle cx="9"  cy="53" r="7"   fill="#5C2610"/>
-        <circle cx="13" cy="62" r="6"   fill="#5C2610"/>
-        <circle cx="14" cy="12" r="4"   fill="#8B4220" opacity="0.4"/>
-        <circle cx="8"  cy="40" r="3"   fill="#8B4220" opacity="0.3"/>
-        <!-- ══ NECK ══ -->
-        <rect x="26" y="37" width="7" height="7" fill="#F0A878"/>
-        <!-- ══ TORSO ══ -->
-        <rect x="21" y="43" width="20" height="20" rx="3" fill="#7C3AED"/>
-        <!-- ══ BACK ARM ══ -->
-        <g class="arm-r">
-          <rect x="21" y="44" width="7" height="14" rx="3.5" fill="#5A28B0"/>
-          <ellipse cx="24.5" cy="59" rx="3.5" ry="2.8" fill="#E09A70"/>
-        </g>
-        <!-- ══ FRONT ARM ══ -->
-        <g class="arm-l">
-          <rect x="35" y="44" width="7" height="14" rx="3.5" fill="#7C3AED"/>
-          <ellipse cx="38.5" cy="59" rx="3.5" ry="2.8" fill="#F0A878"/>
-        </g>
-        <!-- ══ BACK LEG ══ -->
-        <g class="leg-r">
-          <rect x="23" y="62" width="9"  height="20" rx="2" fill="#3A6BAF"/>
-          <rect x="21" y="79" width="12" height="6"  rx="3" fill="#D0CAC1"/>
-          <rect x="21" y="79" width="12" height="3"  rx="2" fill="#4A7FC1"/>
-        </g>
-        <!-- ══ FRONT LEG ══ -->
-        <g class="leg-l">
-          <rect x="29" y="62" width="9"  height="20" rx="2" fill="#4A7FC1"/>
-          <rect x="28" y="79" width="13" height="6"  rx="3" fill="#E8E2D9"/>
-          <rect x="28" y="79" width="13" height="3"  rx="2" fill="#5B8DD9"/>
-        </g>
-        <!-- ══ DEFS ══ -->
-        <defs>
-          <clipPath id="face-clip-popup">
-            <ellipse cx="27" cy="23" rx="20" ry="23"/>
-          </clipPath>
-        </defs>
-        <!-- ══ HEAD ══ -->
-        <ellipse cx="27" cy="23" rx="20" ry="23" fill="#F0A878"/>
-        <image href="face_def.png" x="7" y="9" width="39" height="44"
-               clip-path="url(#face-clip-popup)" preserveAspectRatio="xMidYMid slice"/>
-        <!-- ══ CURLY HAIR FRONT ══ -->
-        <circle cx="29" cy="7"  r="8"   fill="#6B2E14"/>
-        <circle cx="20" cy="6"  r="7"   fill="#6B2E14"/>
-        <circle cx="13" cy="10" r="6"   fill="#6B2E14"/>
-        <circle cx="38" cy="8"  r="7"   fill="#6B2E14"/>
-        <circle cx="43" cy="13" r="6.5" fill="#6B2E14"/>
-        <circle cx="45" cy="19" r="6"   fill="#6B2E14"/>
-        <circle cx="46" cy="26" r="5.5" fill="#6B2E14"/>
-        <circle cx="45" cy="33" r="5"   fill="#6B2E14"/>
-        <circle cx="44" cy="40" r="4.5" fill="#5C2610"/>
-        <circle cx="43" cy="47" r="4"   fill="#5C2610"/>
-        <circle cx="42" cy="54" r="3.5" fill="#5C2610"/>
-        <circle cx="41" cy="61" r="3"   fill="#5C2610"/>
-        <circle cx="40" cy="67" r="2.5" fill="#5C2610"/>
-        <circle cx="28" cy="6"  r="3"   fill="#8B4220" opacity="0.4"/>
-        <circle cx="38" cy="9"  r="2"   fill="#8B4220" opacity="0.35"/>
-      </svg>
-    </div>
-  </div>
-</div>
+
 
 <div class="main">
   <div id="map"></div>
@@ -1480,18 +1339,6 @@ function resetAll() {
   };
 })();
 
-// ─── WALKER POPUP ────────────────────────────────────────────────────────────
-(function() {
-  const overlay = document.getElementById('walker-popup-overlay');
-  const closeBtn = document.getElementById('walker-popup-close');
-  document.querySelector('.walker-wrap').addEventListener('click', () => {
-    overlay.classList.add('open');
-  });
-  closeBtn.addEventListener('click', () => overlay.classList.remove('open'));
-  overlay.addEventListener('click', e => {
-    if (e.target === overlay) overlay.classList.remove('open');
-  });
-})();
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
 buildSidebar();
