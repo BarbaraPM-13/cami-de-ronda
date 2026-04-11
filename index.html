@@ -35,7 +35,7 @@
 
     /* ── HEADER ── */
     header {
-      background: linear-gradient(120deg, #1B4332 0%, #2D6A4F 50%, #40916C 100%);
+      background: linear-gradient(120deg, #40916C 0%, #2D6A4F 50%, #1B4332 100%);
       color: white;
       padding: 10px 18px;
       display: flex;
@@ -196,28 +196,25 @@
     }
 
     /* Custom checkbox */
-    .stage-check {
-      appearance: none;
-      -webkit-appearance: none;
+    .stage-check-visual {
       width: 20px;
       height: 20px;
       border-radius: 50%;
       border: 2.5px solid #d0d0e0;
       cursor: pointer;
       flex-shrink: 0;
-      position: relative;
-      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, border-color 0.2s;
       background: white;
     }
-    .stage-check:checked {
-      background: linear-gradient(135deg, var(--mint), var(--blue));
+    .stage-check-visual.checked {
+      background: var(--coral);
       border-color: transparent;
     }
-    .stage-check:checked::after {
+    .stage-check-visual.checked::after {
       content: '✓';
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
       color: white;
       font-size: 11px;
       font-weight: 900;
@@ -344,7 +341,7 @@
       .btn-toggle-list { display: flex; }
 
       .stage-item  { padding: 11px 12px; }
-      .stage-check { width: 22px; height: 22px; }
+      .stage-check-visual { width: 22px; height: 22px; }
       .stage-name  { font-size: 0.84rem; }
     }
 
@@ -420,7 +417,8 @@
     .popup-check-row {
       display: flex;
       align-items: center;
-      gap: 9px;
+      justify-content: center;
+      position: relative;
       cursor: pointer;
       width: 100%;
       padding: 9px 14px;
@@ -430,6 +428,10 @@
       background: linear-gradient(135deg, var(--blue) 0%, var(--purple) 100%);
       transition: opacity 0.15s, transform 0.15s;
       -webkit-tap-highlight-color: transparent;
+    }
+    .popup-check-row .popup-check-box {
+      position: absolute;
+      left: 12px;
     }
     .popup-check-row.done-btn {
       background: linear-gradient(135deg, var(--mint) 0%, var(--blue) 100%);
@@ -522,9 +524,9 @@
     .stage-item.partial .stage-name {
       color: var(--text);
     }
-    .stage-item.partial .stage-check {
-      background: repeating-linear-gradient(45deg,#52B788 0px,#52B788 4px,#d8f3e8 4px,#d8f3e8 8px);
-      border-color: var(--mint);
+    .stage-item.partial .stage-check-visual {
+      background: repeating-linear-gradient(45deg,#52B788 0px,#52B788 4px,#d8f3e8 4px,#d8f3e8 8px) !important;
+      border-color: var(--mint) !important;
     }
     .stage-item.partial .stage-badge {
       opacity: 1;
@@ -608,6 +610,33 @@
     }
     .completion-badge-close:hover { opacity: 0.88; transform: scale(1.03); }
 
+    /* ── LANGUAGE SWITCHER ── */
+    .lang-switcher {
+      display: flex;
+      gap: 4px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+    .lang-btn {
+      background: rgba(255,255,255,0.15);
+      border: 1.5px solid rgba(255,255,255,0.35);
+      color: white;
+      border-radius: 8px;
+      padding: 3px 9px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+      letter-spacing: 0.5px;
+    }
+    .lang-btn:hover { background: rgba(255,255,255,0.25); }
+    .lang-btn.active {
+      background: rgba(255,255,255,0.9);
+      color: var(--coral);
+      border-color: transparent;
+    }
+
   </style>
 </head>
 <body>
@@ -617,7 +646,7 @@
   <span class="boot-emoji" aria-hidden="true">🥾</span>
 
   <div class="header-title">
-    <h1>Camino de Ronda</h1>
+    <h1 data-i18n="header.title">Camino de Ronda</h1>
     <div class="subtitle">Portbou → Blanes</div>
   </div>
   <div class="progress-wrap">
@@ -629,14 +658,18 @@
       <div class="progress-bar-fill" id="prog-bar"></div>
     </div>
   </div>
+  <div class="lang-switcher">
+    <button class="lang-btn" id="lang-es" onclick="setLang('es')">ES</button>
+    <button class="lang-btn" id="lang-ca" onclick="setLang('ca')">CA</button>
+  </div>
 </header>
 
 <!-- Completion badge -->
 <div class="completion-overlay" id="completion-overlay">
   <div class="completion-badge">
     <div class="completion-badge-emoji">🏅</div>
-    <div class="completion-badge-title">Has completado el Camino de Ronda, ¡enhorabuena!</div>
-    <button class="completion-badge-close" id="completion-close">¡Genial! 🎉</button>
+    <div class="completion-badge-title" data-i18n="completion.title">Has completado el Camino de Ronda, ¡enhorabuena!</div>
+    <button class="completion-badge-close" id="completion-close" data-i18n="completion.button">¡Genial! 🎉</button>
   </div>
 </div>
 
@@ -646,8 +679,8 @@
   <div id="map"></div>
   <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <h2>Partes</h2>
-      <button class="btn-reset" onclick="resetAll()">Reiniciar progreso</button>
+      <h2 data-i18n="sidebar.title">Partes</h2>
+      <button class="btn-reset" onclick="resetAll()" data-i18n="sidebar.reset">Reiniciar progreso</button>
     </div>
     <div class="stage-list" id="stage-list"></div>
   </div>
@@ -655,8 +688,14 @@
 
 <!-- Mobile floating button -->
 <button class="btn-toggle-list" id="btn-toggle" onclick="toggleSidebar()">
-  📋 <span id="btn-label">Ver etapas</span>
+  📋 <span id="btn-label" data-i18n="mobile.stages">Ver etapas</span>
 </button>
+
+<!-- Mixpanel -->
+<script>
+(function(f,b){if(!b.__SV){var e,g,i,h;window.mixpanel=b;b._i=[];b.init=function(e,f,c){function g(a,d){var b=d.split(".");2==b.length&&(a=a[b[0]],d=b[1]);a[d]=function(){a.push([d].concat(Array.prototype.slice.call(arguments,0)))}}var a=b;"undefined"!==typeof c?a=b[c]=[]:c="mixpanel";a.people=a.people||[];a.toString=function(a){var d="mixpanel";"mixpanel"!==c&&(d+="."+c);a||(d+=" (stub)");return d};a.people.toString=function(){return a.toString(1)+".people (stub)"};i="disable time_event track track_pageview track_links track_forms track_with_groups add_group set_group remove_group register register_once alias unregister identify name_tag set_config reset opt_in_tracking opt_out_tracking has_opted_in_tracking has_opted_out_tracking clear_opt_in_out_tracking start_batch_senders people.set people.set_once people.unset people.increment people.append people.union people.track_charge people.clear_charges people.delete_user people.remove".split(" ");for(h=0;h<i.length;h++)g(a,i[h]);var j="set set_once union unset remove delete".split(" ");a.get_group=function(){function b(c){d[c]=function(){call2_args=arguments;call2=[c].concat(Array.prototype.slice.call(call2_args,0));a.push([e].concat(call2))}}for(var d={},e=["get_group"].concat(Array.prototype.slice.call(arguments,0)),c=0;c<j.length;c++)b(j[c]);return d};b._i.push([e,f,c])};b.__SV=1.2;e=f.createElement("script");e.type="text/javascript";e.async=!0;e.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"file:"===f.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";g=f.getElementsByTagName("script")[0];g.parentNode.insertBefore(e,g)}})(document,window.mixpanel||[]);
+mixpanel.init('a37b4a0fde4f3889c2ce109c022dda8c', { persistence: 'localStorage' });
+</script>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
@@ -765,6 +804,80 @@ const STAGES = [
 const TOTAL_KM       = STAGES.reduce((s, e) => s + e.km, 0);
 const STORAGE_KEY    = 'cami-ronda-v2-completed';
 const PARTIAL_KEY    = 'cami-ronda-v2-partials';
+const LANG_KEY       = 'cami-ronda-lang';
+
+// ─── I18N ────────────────────────────────────────────────────────────────────
+const TRANSLATIONS = {
+  es: {
+    'header.title':       'Camino de Ronda',
+    'sidebar.title':      'Partes',
+    'sidebar.stage':      'Parte',
+    'sidebar.reset':      'Reiniciar progreso',
+    'mobile.stages':      'Ver etapas',
+    'mobile.map':         'Ver mapa',
+    'popup.stage':        'Parte',
+    'popup.check':        'Completar',
+    'popup.uncheck':      'Descompletar',
+    'popup.partialAdd':   'Marcar % completada',
+    'popup.partialEdit':  'Parcial:',
+    'popup.percentage':   'Porcentaje:',
+    'popup.partialSave':  'Marcar parcialmente',
+    'popup.partialUpdate':'Actualizar',
+    'confirm.reset':      '¿Seguro que quieres reiniciar todo el progreso?',
+    'completion.title':   '¡Has completado el Camino de Ronda, enhorabuena!',
+    'completion.button':  '¡Genial! 🎉',
+  },
+  ca: {
+    'header.title':       'Camí de Ronda',
+    'sidebar.title':      'Trams',
+    'sidebar.stage':      'Tram',
+    'sidebar.reset':      'Reiniciar el progrés',
+    'mobile.stages':      'Veure trams',
+    'mobile.map':         'Veure mapa',
+    'popup.stage':        'Tram',
+    'popup.check':        'Completar',
+    'popup.uncheck':      'Descompletar',
+    'popup.partialAdd':   'Marcar % completat',
+    'popup.partialEdit':  'Parcial:',
+    'popup.percentage':   'Percentatge:',
+    'popup.partialSave':  'Marcar parcialment',
+    'popup.partialUpdate':'Actualitzar',
+    'confirm.reset':      'Segur que vols reiniciar tot el progrés?',
+    'completion.title':   'Has completat el Camí de Ronda, enhorabona!',
+    'completion.button':  'Genial! 🎉',
+  },
+};
+
+// Detect browser language: prefer 'ca' if browser is Catalan, else 'es'
+const browserLang = (navigator.language || navigator.userLanguage || 'es').toLowerCase();
+let currentLang = localStorage.getItem(LANG_KEY) ||
+                  (browserLang.startsWith('ca') ? 'ca' : 'es');
+
+function t(key) {
+  return (TRANSLATIONS[currentLang] || TRANSLATIONS.es)[key] || key;
+}
+
+function applyTranslations() {
+  // Update all elements with data-i18n attribute
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.dataset.i18n);
+  });
+  // Keep the mobile button label in sync with drawer state
+  document.getElementById('btn-label').textContent = drawerOpen ? t('mobile.map') : t('mobile.stages');
+  // Highlight active language button
+  document.getElementById('lang-es').classList.toggle('active', currentLang === 'es');
+  document.getElementById('lang-ca').classList.toggle('active', currentLang === 'ca');
+  // Re-render the sidebar so dynamic strings (Parte/Tram) update too
+  if (typeof buildSidebar === 'function') buildSidebar();
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem(LANG_KEY, lang);
+  applyTranslations();
+  // Re-open any open popup with updated strings
+  map.closePopup();
+}
 
 // ─── STATE ───────────────────────────────────────────────────────────────────
 let completed = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
@@ -773,6 +886,48 @@ let partials  = new Map(Object.entries(JSON.parse(localStorage.getItem(PARTIAL_K
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify([...completed]));
   localStorage.setItem(PARTIAL_KEY, JSON.stringify(Object.fromEntries(partials)));
+  trackProgress();
+}
+
+// ─── ANALYTICS ───────────────────────────────────────────────────────────────
+(function() {
+  // Persistent anonymous ID — one per device/browser, never changes
+  const ID_KEY = 'cami-ronda-uid';
+  let uid = localStorage.getItem(ID_KEY);
+  if (!uid) {
+    uid = 'u-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+    localStorage.setItem(ID_KEY, uid);
+  }
+  mixpanel.identify(uid);
+})();
+
+function trackProgress() {
+  const doneKm = STAGES.reduce((a, s) => {
+    if (completed.has(s.num)) return a + s.km;
+    const p = partials.get(s.num);
+    if (p) return a + (p / 100 * s.km);
+    return a;
+  }, 0);
+  const pct            = Math.round((doneKm / TOTAL_KM) * 1000) / 10; // one decimal
+  const stagesComplete = completed.size;
+  const stagesPartial  = partials.size;
+
+  // People.set OVERWRITES — always reflects the user's latest state.
+  // This is what lets Mixpanel compute "average completion across all users".
+  mixpanel.people.set({
+    completion_pct:    pct,
+    km_done:           Math.round(doneKm * 10) / 10,
+    stages_completed:  stagesComplete,
+    stages_partial:    stagesPartial,
+    last_active:       new Date().toISOString(),
+  });
+
+  // One event per save — useful for a timeline but not for averages.
+  mixpanel.track('progress_updated', {
+    completion_pct:   pct,
+    km_done:          Math.round(doneKm * 10) / 10,
+    stages_completed: stagesComplete,
+  });
 }
 
 function setPartial(num, pct) {
@@ -791,7 +946,7 @@ let drawerOpen  = false;
 function toggleSidebar() {
   drawerOpen = !drawerOpen;
   sidebar.classList.toggle('open', drawerOpen);
-  btnLabel.textContent = drawerOpen ? 'Ver mapa' : 'Ver partes';
+  btnLabel.textContent = drawerOpen ? t('mobile.map') : t('mobile.stages');
   if (drawerOpen) setTimeout(() => map.invalidateSize(), 310);
 }
 
@@ -837,7 +992,7 @@ function buildStagePopupContent(stage) {
 
   // Info block
   div.innerHTML =
-    '<div class="popup-stage">Parte ' + stage.num + '</div>' +
+    '<div class="popup-stage">' + t('popup.stage') + ' ' + stage.num + '</div>' +
     '<div class="popup-route">' + fromName + ' \u2192 ' + toName + '</div>' +
     '<div class="popup-km">' + stage.km + ' km</div>';
 
@@ -848,7 +1003,7 @@ function buildStagePopupContent(stage) {
     '<span class="popup-check-box' + (done ? ' checked' : '') + '">' +
       (done ? '<span class="popup-check-tick">\u2713</span>' : '') +
     '</span>' +
-    '<span class="popup-check-label">' + (done ? 'Completada \u2014 desmarcar' : 'Marcar como completada') + '</span>';
+    '<span class="popup-check-label">' + (done ? t('popup.uncheck') : t('popup.check')) + '</span>';
   mainBtn.addEventListener('click', () => { toggleStage(stage.num); map.closePopup(); });
   div.appendChild(mainBtn);
 
@@ -856,18 +1011,18 @@ function buildStagePopupContent(stage) {
   if (!done) {
     const toggleBtn = document.createElement('button');
     toggleBtn.className = 'popup-partial-toggle';
-    toggleBtn.textContent = partial > 0 ? '\u2736 Parcial: ' + partial + '% \u2014 editar' : '+ Marcar % completada';
+    toggleBtn.textContent = partial > 0 ? '\u2736 ' + t('popup.partialEdit') + ' ' + partial + '%' : '+ ' + t('popup.partialAdd');
 
     const section = document.createElement('div');
     section.className = 'popup-partial-section' + (partial > 0 ? ' open' : '');
     section.innerHTML =
-      '<div class="popup-partial-label">Porcentaje: ' +
+      '<div class="popup-partial-label">' + t('popup.percentage') + ' ' +
         '<strong id="pct-val">' + pctInit + '%</strong>' +
         '<span class="popup-partial-km" id="pct-km"> (' + kmInit + ' km)</span>' +
       '</div>' +
       '<input type="range" class="popup-range" id="pct-range" min="10" max="90" step="10" value="' + pctInit + '" />' +
       '<button class="popup-btn-partial' + (partial > 0 ? ' active-partial' : '') + '" id="pct-save">' +
-        (partial > 0 ? '\u2736 Actualizar (' + partial + '%)' : '\u2736 Marcar parcialmente') +
+        (partial > 0 ? '\u2736 ' + t('popup.partialUpdate') + ' (' + partial + '%)' : '\u2736 ' + t('popup.partialSave')) +
       '</button>';
 
     toggleBtn.addEventListener('click', () => section.classList.toggle('open'));
@@ -993,6 +1148,7 @@ function setActiveStage(num) {
   // Highlight sidebar item
   const sidebarItem = document.querySelector(`.stage-item[data-stage="${num}"]`);
   if (sidebarItem) sidebarItem.classList.add('map-active');
+
 }
 
 function buildSidebar() {
@@ -1009,24 +1165,25 @@ function buildSidebar() {
     item.className = `stage-item${done ? ' completed' : partial ? ' partial' : ''}`;
     item.dataset.stage = stage.num;
     item.innerHTML = `
-      <input type="checkbox" class="stage-check" ${done ? 'checked' : ''} data-stage="${stage.num}" />
+      <span class="stage-check-visual${done ? ' checked' : ''}"></span>
       <div class="stage-info">
-        <div class="stage-num">Parte ${stage.num}</div>
+        <div class="stage-num">${t('sidebar.stage')} ${stage.num}</div>
         <div class="stage-name">${from.name} → ${to.name}</div>
         <div class="stage-km">${done ? stage.km + ' km' : partial ? `${(partial/100*stage.km).toFixed(1)} / ${stage.km} km (${partial}%)` : stage.km + ' km'}</div>
       </div>
       <span class="stage-badge">${partial && !done ? '✦' : ''}</span>
     `;
 
-    item.querySelector('.stage-check').addEventListener('change', e => {
+    const checkVisual = item.querySelector('.stage-check-visual');
+
+    checkVisual.addEventListener('click', e => {
       e.stopPropagation();
       toggleStage(stage.num);
     });
 
     item.addEventListener('click', e => {
-      if (e.target.classList.contains('stage-check')) return;
+      if (e.target === checkVisual) return;
       zoomToStage(stage, item);
-      // On mobile, close drawer after selecting
       if (window.innerWidth <= 640 && drawerOpen) toggleSidebar();
     });
 
@@ -1096,7 +1253,7 @@ function refresh() {
 }
 
 function resetAll() {
-  if (!confirm('¿Seguro que quieres reiniciar todo el progreso?')) return;
+  if (!confirm(t('confirm.reset'))) return;
   completed.clear();
   partials.clear();
   saveState();
@@ -1208,6 +1365,8 @@ function resetAll() {
 // ─── INIT ────────────────────────────────────────────────────────────────────
 buildSidebar();
 refresh();
+applyTranslations();
+trackProgress(); // snapshot current state on every page load
 </script>
 </body>
 </html>
